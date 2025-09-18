@@ -525,9 +525,10 @@ console.log(realtorFees(listings[2]));
  * Task-5: Sort the listing array ascendingly in a new variable called listingAscendingly
  */
 //WRITE YOUR CODE BELOW
+//
 const listingAscendingly = [...listings].sort((a, b) => {
-  const priceA = parseInt(a.price.replace(/[$,]/g, ""));
-  const priceB = parseInt(b.price.replace(/[$,]/g, ""));
+  const priceA = Number(a.price.replace(/[$,]/g, ""));
+  const priceB = Number(b.price.replace(/[$,]/g, ""));
   return priceA - priceB;
 });
 
