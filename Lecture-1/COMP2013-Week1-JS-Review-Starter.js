@@ -175,33 +175,107 @@ console.log(lambdaFunctionDeclaration("Zack")); //embedding a variable in a stri
  *8
  Ternaries are short, one liners, if/else statements 
  */
+//traditional if/else statement
+if (student0.tuitionPaid > 10000) {
+  console.log("They are paying too much!");
+} else {
+  console.log("They are paying a reasonable amount.");
+}
+
+//ternary statement
+// condition ? value if true : value if false
+let result =
+  student0.tuitionPaid > 10000
+    ? "They are paying too much!"
+    : "They are paying a reasonable amount.";
+
+console.log(result);
+console.log(student0.courses);
+
+// Don't do this, nested ternaries are hard to read
+let tuitionRangeChecker =
+  student0.tuitionPaid > 10000
+    ? student0.tuitionPaid > 15000
+      ? "This is in range"
+      : "This is out of range"
+    : "This is too low";
+
+console.log(tuitionRangeChecker);
+
+// Use this instead
+let tuitionRangeCheckerBetter =
+  student0.tuitionPaid > 10000 && student0.tuitionPaid < 15000
+    ? "Tuition is in range."
+    : "Tuition is out of range.";
+
+console.log(tuitionRangeCheckerBetter);
 
 /**
  *9
  Short circuting with &&, ||, ?? operators
  NOTE: Falsy values are (false, 0 (the number zero), empty string, undefined, NaN, null)
  */
+let a = -5;
+let b = 2;
 
 //and operator work that both values need to be true
+a > 0 && b > 0
+  ? console.log("Both values are positive")
+  : console.log("One or both values are not positive");
 
 //or operator work that one of the values need to be true
 
+a > 0 || b < 0
+  ? console.log("At least one value is positive")
+  : console.log("Both values are not positive");
+
 //using or operator with a zero value cause issues beacuse zero number is a falsy value
+let c = 0;
+let d = 5;
+
+let orResult = c || d; //this will return 5 because c is a falsy value
+console.log(orResult); //5
 
 //to solve this issue we use the Nullish coalescing operator
+let nullishResult = c ?? d; //this will return 0 because c is not null or undefined
+console.log(nullishResult); //0
 
 /**
  *10
  Array map: To change all the values of an array at once using a statement
  stored in a new collection (array or object)
  */
+// Using for loop
+const numArray = [2, 3, 5, 7, 9];
+const numArrayMultipleBy5 = [];
+for (let i = 0; i < numArray.length; i++) {
+  numArrayMultipleBy5.push(numArray[i] * 5);
+}
+console.log(numArrayMultipleBy5); //displaying the new array
+
+// Using map method
+const numArrayWithMap = numArray.map((num) => num * 5); //using map method to multiply each value by 5
+console.log(numArrayWithMap); //displaying the new array
+
+const dataWithGraduated = data.map((stud) => ({ ...stud, graduated: false }));
+console.log(dataWithGraduated);
 
 //to get all students names in a new array
+const studentsNames = data.map((stud) => stud.studentName);
+console.log(studentsNames);
 
 /**
  *11
  Array filter: to filter certian data in regarded to a statement stored in a new collection
  */
+
+const dataWith2002 = data.filter((stud) => stud.dateOfBirth.includes("2002"));
+console.log(dataWith2002);
+
+const dataWithTuitionMoreThan12000 = data.filter(
+  (stud) => stud.tuitionPaid > 12000
+);
+console.log(dataWithTuitionMoreThan12000);
 
 //Filter all students born in 2002 using filter and includes method
 
@@ -210,6 +284,15 @@ console.log(lambdaFunctionDeclaration("Zack")); //embedding a variable in a stri
  Array reduce: To reduce an array to a single value 
  Ex: display the total of all students tuition paid
  */
+
+// reduce method to get the total tuition paid by all students
+// the callback function takes two parameters, the first is the accumulator (total) and the second is the current value (stud)
+// the initial value of the accumulator is 0
+const totalTuitionPaid = data.reduce(
+  (total, stud) => total + stud.tuitionPaid,
+  0
+);
+console.log(totalTuitionPaid);
 
 //the reduce method takes two parameters, the first is a callback function and the second is the initial value.
 
@@ -220,7 +303,23 @@ console.log(lambdaFunctionDeclaration("Zack")); //embedding a variable in a stri
  
  */
 
+const numArrayToSort = [5, 3, 8, 1, 4];
+numArrayToSort.sort((a, b) => a - b); //ascending order
+console.log(numArrayToSort);
+
+numArrayToSort.sort((a, b) => b - a); //descending order
+console.log(numArrayToSort);
+
 //sort students by paid tuition
+const studentsSortedByTuition = data
+  .slice() //create a shallow copy of the array to avoid changing the orginal array
+  .sort((a, b) => a.tuitionPaid - b.tuitionPaid);
+console.log(studentsSortedByTuition);
+
+const dataSortedByTuitionPaid = data.sort(
+  (studA, studB) => studA.tuitionPaid - studB.tuitionPaid
+);
+console.log(dataSortedByTuitionPaid);
 
 /**
  *14
@@ -246,6 +345,16 @@ const newerStudent = {
   },
 };
 
+data = [...data, newerStudent]; //creating a new array with the new student object
+console.log(data);
+
 //Remove a student object using filter method
 
+data = data.filter((stud) => !stud.studentName.includes("John Doe"));
+console.log(data);
+
 //Update a student object using the map method
+data = data.map((stud) =>
+  stud.id === 3 ? { ...stud, tuitionPaid: 12000 } : stud
+);
+console.log(data);
