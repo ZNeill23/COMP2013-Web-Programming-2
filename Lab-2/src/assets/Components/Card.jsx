@@ -7,7 +7,6 @@ export default function Card(props) {
       <h4 style={{ color: props.rating >= 4.0 ? "green" : "red" }}>
         {props.rating} ★
       </h4>
-
       <p>{props.price}</p>
     </div>
   );
