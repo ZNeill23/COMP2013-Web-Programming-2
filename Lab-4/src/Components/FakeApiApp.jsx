@@ -4,55 +4,35 @@ import PostsContainer from "./PostsContainer";
 
 export default function FakeApiApp() {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [newPost, setNewPost] = useState({
-    title: "",
-    body: "",
-  });
+  const [newPost, setNewPost] = useState({ title: "", body: "" });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/posts")
-      .then((response) => response.json())
-      .then((posts) => {
-        setData(posts);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+    fetchPosts();
   }, []);
 
-  const handleChange = (e) => {
-    setNewPost({
-      ...newPost,
-      [e.target.name]: e.target.value,
-    });
+  const fetchPosts = async () => {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const posts = await response.json();
+    setData(posts);
+    setIsLoading(false);
   };
+
+  const handleChange = (e) =>
+    setNewPost({ ...newPost, [e.target.name]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (newPost.title.trim() === "" || newPost.body.trim() === "") {
-      return;
-    }
-
-    const newPostObj = {
-      id: data.length + 1,
-      title: newPost.title,
-      body: newPost.body,
-    };
-
-    setData([newPostObj, ...data]);
-
-    setNewPost({
-      title: "",
-      body: "",
-    });
+    if (!newPost.title.trim() || !newPost.body.trim()) return;
+    setData([{ id: data.length + 1, ...newPost }, ...data]);
+    setNewPost({ title: "", body: "" });
   };
 
   return (
     <div>
       <h1>Fake API App</h1>
+
+      {isLoading ? <h2>Loading...</h2> : null}
 
       <PostForm
         newPost={newPost}
@@ -60,7 +40,7 @@ export default function FakeApiApp() {
         handleSubmit={handleSubmit}
       />
 
-      {loading ? <p>Loading...</p> : <PostsContainer data={data} />}
+      <PostsContainer data={data} />
     </div>
   );
 }
