@@ -14,7 +14,6 @@ export default function GroceriesAppContainer() {
     brand: "",
     image: "",
     price: "",
-    quantity: "",
   });
   const [postResponse, setPostResponse] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -41,10 +40,10 @@ export default function GroceriesAppContainer() {
     }
   };
 
-  const handleAddQuantity = (productId, mode) => {
+  const handleAddQuantity = (id, mode) => {
     if (mode === "cart") {
       const updated = cartList.map((item) =>
-        item._id === productId ? { ...item, quantity: item.quantity + 1 } : item
+        item._id === id ? { ...item, quantity: item.quantity + 1 } : item
       );
       setCartList(updated);
       return;
@@ -52,17 +51,17 @@ export default function GroceriesAppContainer() {
 
     if (mode === "product") {
       const updated = productsQuantity.map((item) =>
-        item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       );
       setProductsQuantity(updated);
       return;
     }
   };
 
-  const handleRemoveQuantity = (productId, mode) => {
+  const handleRemoveQuantity = (id, mode) => {
     if (mode === "cart") {
       const updated = cartList.map((item) =>
-        item._id === productId && item.quantity > 1
+        item._id === id && item.quantity > 1
           ? { ...item, quantity: item.quantity - 1 }
           : item
       );
@@ -72,7 +71,7 @@ export default function GroceriesAppContainer() {
 
     if (mode === "product") {
       const updated = productsQuantity.map((item) =>
-        item.id === productId && item.quantity > 0
+        item.id === id && item.quantity > 0
           ? { ...item, quantity: item.quantity - 1 }
           : item
       );
@@ -81,12 +80,12 @@ export default function GroceriesAppContainer() {
     }
   };
 
-  const handleAddToCart = (productId) => {
-    const product = productsData.find((p) => p._id === productId);
-    const pQuantity = productsQuantity.find((q) => q.id === productId);
+  const handleAddToCart = (id) => {
+    const product = productsData.find((p) => p._id === id);
+    const pQuantity = productsQuantity.find((q) => q.id === id);
 
     const newCartList = [...cartList];
-    const productInCart = newCartList.find((p) => p._id === productId);
+    const productInCart = newCartList.find((p) => p._id === id);
 
     if (productInCart) {
       productInCart.quantity += pQuantity.quantity;
@@ -99,8 +98,8 @@ export default function GroceriesAppContainer() {
     setCartList(newCartList);
   };
 
-  const handleRemoveFromCart = (productId) => {
-    const updated = cartList.filter((p) => p._id !== productId);
+  const handleRemoveFromCart = (id) => {
+    const updated = cartList.filter((p) => p._id !== id);
     setCartList(updated);
   };
 
@@ -114,7 +113,6 @@ export default function GroceriesAppContainer() {
       brand: "",
       image: "",
       price: "",
-      quantity: "",
     });
   };
 
@@ -130,9 +128,11 @@ export default function GroceriesAppContainer() {
           .post("http://localhost:3000/products", formData)
           .then((response) => {
             setPostResponse(response.data);
+            console.log(response);
           })
           .then(() => {
             handleResetForm();
+            handleProductsDB();
           });
       }
     } catch (error) {
@@ -141,9 +141,51 @@ export default function GroceriesAppContainer() {
   };
 
   const handleOnChange = (e) => {
-    setFormData((prevData) => {
-      return { ...prevData, [e.target.name]: e.target.value };
-    });
+    setFormData((prevData) => ({
+      ...prevData,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleOnDelete = async (id) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/products/${id}`
+      );
+      setPostResponse(response.data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleOnEdit = async (id) => {
+    try {
+      const productToEdit = await axios.get(
+        `http://localhost:3000/products/${id}`
+      );
+      setFormData({
+        productName: productToEdit.data.productName,
+        brand: productToEdit.data.brand,
+        image: productToEdit.data.image,
+        price: productToEdit.data.price,
+        _id: productToEdit.data._id,
+      });
+      setIsEditing(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleOnUpdate = async (id) => {
+    try {
+      const result = await axios.patch(
+        `http://localhost:3000/products/${id}`,
+        formData
+      );
+      setPostResponse({ message: result.data.message, date: result.data.date });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -156,11 +198,12 @@ export default function GroceriesAppContainer() {
           brand={formData.brand}
           image={formData.image}
           price={formData.price}
-          quantity={formData.quantity}
           handleOnSubmit={handleOnSubmit}
           handleOnChange={handleOnChange}
           isEditing={isEditing}
         />
+
+        <p style={{ color: "green" }}>{postResponse?.message}</p>
 
         <ProductsContainer
           products={productsData}
@@ -168,6 +211,8 @@ export default function GroceriesAppContainer() {
           handleRemoveQuantity={handleRemoveQuantity}
           handleAddToCart={handleAddToCart}
           productsQuantity={productsQuantity}
+          handleOnEdit={handleOnEdit}
+          handleOnDelete={handleOnDelete}
         />
 
         <CartContainer

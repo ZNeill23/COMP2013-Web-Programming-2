@@ -41,10 +41,9 @@ server.get("/products", async (require, response) => {
 });
 
 // To POST a new product to DB
-server.post("/products", async (require, response) => {
-  const { id, productName, brand, image, price } = require.body;
+server.post("/products", async (request, response) => {
+  const { productName, brand, image, price } = request.body;
   const newProduct = new Product({
-    id,
     productName,
     brand,
     image,
@@ -62,8 +61,8 @@ server.post("/products", async (require, response) => {
 });
 
 // To DELETE a product from DB by it's id
-server.delete("/products/:id", async (require, response) => {
-  const { id } = require.params;
+server.delete("/products/:id", async (request, response) => {
+  const { id } = request.params;
   try {
     await Product.findByIdAndDelete(id);
     response.send({
@@ -76,8 +75,8 @@ server.delete("/products/:id", async (require, response) => {
 });
 
 // To GET one product by id
-server.get("/products/:id", async (require, response) => {
-  const { id } = require.params;
+server.get("/products/:id", async (request, response) => {
+  const { id } = request.params;
   try {
     const productToEdit = await Product.findById(id);
     response.send(productToEdit);
@@ -87,9 +86,9 @@ server.get("/products/:id", async (require, response) => {
 });
 
 // To PATCH a contact by id
-server.patch("/products/:id", async (require, response) => {
-  const { id } = require.params;
-  const { productName, brand, image, price } = require.body;
+server.patch("/products/:id", async (request, response) => {
+  const { id } = request.params;
+  const { productName, brand, image, price } = request.body;
   try {
     await Product.findByIdAndUpdate(id, {
       productName,

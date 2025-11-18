@@ -52,10 +52,7 @@ export default function ProductForm({
           required
         />
         <br />
-
-        <button type="submit">
-          {isEditing ? "Update Product" : "Add Product"}
-        </button>
+        <button>{isEditing ? "Update Product" : "Add Product"}</button>
       </form>
     </div>
   );

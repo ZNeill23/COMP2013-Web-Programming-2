@@ -40,8 +40,8 @@ server.get("/contacts", async (require, response) => {
 });
 
 // To POST a new contact to DB
-server.post("/contacts", async (request, response) => {
-  const { name, email, phone, address, image } = request.body;
+server.post("/contacts", async (require, response) => {
+  const { name, email, phone, address, image } = require.body;
   const newContact = new Contact({
     name,
     contact: {
@@ -53,12 +53,10 @@ server.post("/contacts", async (request, response) => {
   });
   try {
     await newContact.save();
-    response
-      .status(200)
-      .send({
-        message: `Contact saved successfully!`,
-        date: new Date(Date.now()),
-      });
+    response.status(200).send({
+      message: `Contact saved successfully!`,
+      date: new Date(Date.now()),
+    });
   } catch (error) {
     response.status(400).send({ message: error.message });
   }
