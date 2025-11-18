@@ -4,7 +4,6 @@ import ContactsCardContainer from "./ContactsCardContainer";
 import ContactForm from "./ContactForm";
 
 export default function ContactsApp() {
-  // States
   const [contactsData, setContactsData] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
