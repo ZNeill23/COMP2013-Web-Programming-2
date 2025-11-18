@@ -14,6 +14,7 @@ export default function ContactsApp() {
     image: "",
   });
   const [postResponse, setPostResponse] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   // useEffect
   useEffect(() => {
@@ -31,23 +32,34 @@ export default function ContactsApp() {
     }
   };
 
+  // Handle to reset the form
+  const handleResetForm = () => {
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      image: "",
+    });
+  };
+
   // Handle the submission of data
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios
-        .post("http://localhost:3000/contacts", formData)
-        .then((response) => setPostResponse(response.data.message))
-        .then(() =>
-          setFormData({
-            name: "",
-            email: "",
-            phone: "",
-            address: "",
-            image: "",
+      if (isEditing) {
+        handleOnUpdate(formData._id);
+        handleResetForm();
+        setIsEditing(false);
+      } else {
+        await axios
+          .post("http://localhost:3000/contacts", formData)
+          .then((response) => {
+            setPostResponse(response.data);
+            console.log(response);
           })
-        );
-      handleContactsDB();
+          .then(() => handleResetForm());
+      }
     } catch (error) {
       console.log(error.message);
     }
@@ -66,7 +78,7 @@ export default function ContactsApp() {
       const response = await axios.delete(
         `http://localhost:3000/contacts/${id}`
       );
-      setPostResponse(response.data.message);
+      setPostResponse(response.data);
       console.log(response);
     } catch (error) {
       console.log(error.message);
@@ -85,7 +97,22 @@ export default function ContactsApp() {
         phone: contactToEdit.data.contact.phone,
         address: contactToEdit.data.contact.address,
         image: contactToEdit.data.image,
+        _id: contactToEdit.data._id,
       });
+      setIsEditing(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Handle updating the api patch route
+  const handleOnUpdate = async (id) => {
+    try {
+      const result = await axios.patch(
+        `http://localhost:3000/contacts/${id}`,
+        formData
+      );
+      setPostResponse({ message: result.data.message, date: result.data.date });
     } catch (error) {
       console.log(error);
     }
@@ -102,8 +129,9 @@ export default function ContactsApp() {
         image={formData.image}
         handleOnSubmit={handleOnSubmit}
         handleOnChange={handleOnChange}
+        isEditing={isEditing}
       />
-      <p style={{ color: "green" }}>{postResponse}</p>
+      <p style={{ color: "green" }}>{postResponse?.message}</p>
       <ContactsCardContainer
         contacts={contactsData}
         handleOnDelete={handleOnDelete}

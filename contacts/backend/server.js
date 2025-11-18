@@ -51,12 +51,14 @@ server.post("/contacts", async (request, response) => {
     },
     image,
   });
-
   try {
     await newContact.save();
     response
       .status(200)
-      .send({ message: `Contact saved successfully! ${crypto.randomUUID()}` });
+      .send({
+        message: `Contact saved successfully!`,
+        date: new Date(Date.now()),
+      });
   } catch (error) {
     response.status(400).send({ message: error.message });
   }
@@ -67,7 +69,10 @@ server.delete("/contacts/:id", async (request, response) => {
   const { id } = request.params;
   try {
     await Contact.findByIdAndDelete(id);
-    response.send({ message: `Contact is deleted with the id: ${id}` });
+    response.send({
+      message: `Contact is deleted`,
+      date: new Date(Date.now()),
+    });
   } catch (error) {
     response.status(400).send({ message: error.message });
   }
@@ -79,6 +84,26 @@ server.get("/contacts/:id", async (request, response) => {
   try {
     const contactToEdit = await Contact.findById(id);
     response.send(contactToEdit);
+  } catch (error) {
+    response.status(500).send({ message: error.message });
+  }
+});
+
+// To PATCH a contact by id
+server.patch("/contacts/:id", async (request, response) => {
+  const { id } = request.params;
+  const { name, email, phone, address, image } = request.body;
+
+  try {
+    await Contact.findByIdAndUpdate(id, {
+      name,
+      contact: { email, phone, address },
+      image,
+    });
+    response.send({
+      message: `Contact has been updated`,
+      date: new Date(Date.now()),
+    });
   } catch (error) {
     response.status(500).send({ message: error.message });
   }

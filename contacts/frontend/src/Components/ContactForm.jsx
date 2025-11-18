@@ -6,6 +6,7 @@ export default function ContactForm({
   image,
   handleOnSubmit,
   handleOnChange,
+  isEditing,
 }) {
   return (
     <div>
@@ -64,7 +65,7 @@ export default function ContactForm({
           placeholder="Enter image URL"
         />
         <br />
-        <button>Submit</button>
+        <button>{isEditing ? "Editing" : "Submit"}</button>
       </form>
     </div>
   );
