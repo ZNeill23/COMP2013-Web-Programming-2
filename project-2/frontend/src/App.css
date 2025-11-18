@@ -151,3 +151,10 @@ img {
   background-color: green;
   width: 50%;
 }
+
+.FormSection {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

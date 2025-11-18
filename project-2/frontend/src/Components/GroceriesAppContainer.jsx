@@ -20,7 +20,7 @@ export default function GroceriesAppContainer() {
 
   useEffect(() => {
     handleProductsDB();
-  }, []);
+  }, [postResponse]);
 
   const handleProductsDB = async () => {
     try {
@@ -193,17 +193,19 @@ export default function GroceriesAppContainer() {
       <NavBar quantity={cartList.length} />
 
       <div className="GroceriesApp-Container">
-        <ProductForm
-          productName={formData.productName}
-          brand={formData.brand}
-          image={formData.image}
-          price={formData.price}
-          handleOnSubmit={handleOnSubmit}
-          handleOnChange={handleOnChange}
-          isEditing={isEditing}
-        />
+        <div className="FormSection">
+          <ProductForm
+            productName={formData.productName}
+            brand={formData.brand}
+            image={formData.image}
+            price={formData.price}
+            handleOnSubmit={handleOnSubmit}
+            handleOnChange={handleOnChange}
+            isEditing={isEditing}
+          />
 
-        <p style={{ color: "green" }}>{postResponse?.message}</p>
+          <p style={{ color: "green" }}>{postResponse?.message}</p>
+        </div>
 
         <ProductsContainer
           products={productsData}
