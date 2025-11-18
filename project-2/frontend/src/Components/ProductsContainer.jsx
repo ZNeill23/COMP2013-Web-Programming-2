@@ -15,6 +15,8 @@ export default function ProductsContainer({
         const pQuantity = productsQuantity.find((p) => p.id === product._id);
         const quantity = pQuantity ? pQuantity.quantity : 0;
 
+        // Two returns was the only way I could get the quantity to show correctly
+        // unsure how to fix this otherwise or if this is the proper way to do it
         return (
           <ProductCard
             key={product._id}

@@ -1,7 +1,6 @@
 import QuantityCounter from "./QuantityCounter";
 
 export default function CartCard({
-  id,
   _id,
   image,
   productName,
