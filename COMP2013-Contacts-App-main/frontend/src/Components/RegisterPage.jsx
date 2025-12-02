@@ -3,11 +3,9 @@ import axios from "axios";
 import { useState } from "react";
 
 export default function RegisterPage() {
-  //States
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [postResponse, setPostResponse] = useState("");
 
-  //Handlers
   const handleOnChange = (e) => {
     setFormData((prevData) => {
       return { ...prevData, [e.target.name]: e.target.value };
